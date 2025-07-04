@@ -45,6 +45,7 @@ def _generate_launch_description(context: launch.LaunchContext, *args, **kwargs)
                 # Input topic, is not a remap to marry API with offline node
                 "lidar_topic": LaunchConfiguration("lidar_topic"),
                 "use_2d_lidar": LaunchConfiguration("use_2d_lidar"),
+                "imu_topic": LaunchConfiguration("imu_topic"),
                 # ROS node configuration
                 "lidar_odom_frame": LaunchConfiguration("lidar_odom_frame"),
                 "wheel_odom_frame": LaunchConfiguration("wheel_odom_frame"),

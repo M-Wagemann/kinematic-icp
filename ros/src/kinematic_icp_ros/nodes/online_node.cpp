@@ -31,6 +31,8 @@
 #include <rclcpp/subscription.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <sensor_msgs/msg/Imu>
+
 
 #include "kinematic_icp_ros/nodes/online_node.hpp"
 #include "kinematic_icp_ros/server/LidarOdometryServer.hpp"
@@ -40,6 +42,7 @@ namespace kinematic_icp_ros {
 OnlineNode ::OnlineNode(const rclcpp::NodeOptions &options) {
     node_ = rclcpp::Node::make_shared("kinematic_icp_online_node", options);
     lidar_topic_ = node_->declare_parameter<std::string>("lidar_topic");
+    imu_topic_ = node_ -> declare_parameter<std::string>("imu_topic");
     odometry_server_ = std::make_shared<LidarOdometryServer>(node_);
     const bool use_2d_lidar = node_->declare_parameter<bool>("use_2d_lidar");
     if (use_2d_lidar) {

@@ -7,6 +7,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 "lidar_topic",
+                default_value="/cloud",
                 description="",
             ),
             DeclareLaunchArgument(
@@ -21,13 +22,18 @@ def generate_launch_description():
                 description="",
             ),
             DeclareLaunchArgument(
+                "imu_topic",
+                default_value="/ranger/imu/data_raw",
+                description="",
+            ),
+            DeclareLaunchArgument(
                 "lidar_odom_frame",
                 default_value="odom_lidar",
                 description="",
             ),
             DeclareLaunchArgument(
                 "wheel_odom_frame",
-                default_value="odom",
+                default_value="/ranger/odom",
                 description="",
             ),
             DeclareLaunchArgument(

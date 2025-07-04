@@ -34,6 +34,7 @@
 #include <rclcpp/node_options.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <sensor_msgs/msg/Imu>
 
 #include "kinematic_icp_ros/nodes/offline_node.hpp"
 #include "kinematic_icp_ros/server/LidarOdometryServer.hpp"
@@ -64,13 +65,13 @@ OfflineNode::OfflineNode(const rclcpp::NodeOptions &options) {
         RCLCPP_INFO_STREAM(node_->get_logger(),
                            "Started in 3D Lidar mode with topic: " << lidar_topic_);
     }
-
+    imu_topic_ = node_ -> declare_parameter<std::string>("imu_topic");
     auto bag_filename = node_->declare_parameter<std::string>("bag_filename");
     const auto poses_filename = generateOutputFilename(bag_filename);
     output_pose_file_ = std::filesystem::path(node_->declare_parameter<std::string>("output_dir"));
     output_pose_file_ /= poses_filename;
     auto tf_bridge = std::make_shared<BufferableBag::TFBridge>(node_);
-    bag_multiplexer_.AddBag(BufferableBag(bag_filename, tf_bridge, lidar_topic_));
+    bag_multiplexer_.AddBag(BufferableBag(bag_filename, tf_bridge, lidar_topic_, imu_topic_));
 }
 
 void OfflineNode::writePosesInTumFormat() {
