@@ -59,6 +59,7 @@ def _generate_launch_description(context: launch.LaunchContext, *args, **kwargs)
                 "bag_filename": file,
                 "output_dir": LaunchConfiguration("output_dir"),
                 "max_num_threads": 0,
+                "cmd_vel": LaunchConfiguration("cmd_vel"),
             },
         ],
     )

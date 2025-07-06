@@ -27,6 +27,11 @@ def generate_launch_description():
                 description="",
             ),
             DeclareLaunchArgument(
+                "cmd_vel",
+                default_value="ackermann_stering",
+                description="",
+            ),
+            DeclareLaunchArgument(
                 "lidar_odom_frame",
                 default_value="odom_lidar",
                 description="",
