@@ -21,11 +21,11 @@ def generate_launch_description():
                 default_value="lidar_odometry",
                 description="",
             ),
-            DeclareLaunchArgument(
-                "imu_topic",
-                default_value="/ranger/imu/data_raw",
-                description="",
-            ),
+            # DeclareLaunchArgument(
+            #     "imu_topic",
+            #     default_value="/ranger/imu/data_raw",
+            #     description="",
+            # ),
             DeclareLaunchArgument(
                 "cmd_vel",
                 default_value="ackermann_stering",

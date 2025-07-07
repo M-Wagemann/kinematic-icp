@@ -34,7 +34,7 @@
 #include <rclcpp/node_options.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <sensor_msgs/msg/Imu>
+//#include <sensor_msgs/msg/Imu>
 
 #include "kinematic_icp_ros/nodes/offline_node.hpp"
 #include "kinematic_icp_ros/server/LidarOdometryServer.hpp"
@@ -55,6 +55,7 @@ namespace kinematic_icp_ros {
 
 OfflineNode::OfflineNode(const rclcpp::NodeOptions &options) {
     node_ = rclcpp::Node::make_shared("kinematic_icp_offline_node", options);
+    cmd_vel_ = node_ ->declare_parameter<std::string>("cmd_vel")
     lidar_topic_ = node_->declare_parameter<std::string>("lidar_topic");
     use_2d_lidar_ = node_->declare_parameter<bool>("use_2d_lidar");
     odometry_server_ = std::make_shared<LidarOdometryServer>(node_);
@@ -65,7 +66,7 @@ OfflineNode::OfflineNode(const rclcpp::NodeOptions &options) {
         RCLCPP_INFO_STREAM(node_->get_logger(),
                            "Started in 3D Lidar mode with topic: " << lidar_topic_);
     }
-    imu_topic_ = node_ -> declare_parameter<std::string>("imu_topic");
+    //imu_topic_ = node_ -> declare_parameter<std::string>("imu_topic");
     auto bag_filename = node_->declare_parameter<std::string>("bag_filename");
     const auto poses_filename = generateOutputFilename(bag_filename);
     output_pose_file_ = std::filesystem::path(node_->declare_parameter<std::string>("output_dir"));

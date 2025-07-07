@@ -62,7 +62,7 @@ using namespace utils;
 
 LidarOdometryServer::LidarOdometryServer(rclcpp::Node::SharedPtr node) : node_(node) {
     lidar_odom_frame_ = node->declare_parameter<std::string>("lidar_odom_frame", lidar_odom_frame_);
-    imu_odom_frame_ = node->declare_parameter<std::string>("imu_odom_frame", imu_odom_frame_);
+    //imu_odom_frame_ = node->declare_parameter<std::string>("imu_odom_frame", imu_odom_frame_);
 
     wheel_odom_frame_ = node->declare_parameter<std::string>("wheel_odom_frame", wheel_odom_frame_);
     base_frame_ = node->declare_parameter<std::string>("base_frame", base_frame_);
