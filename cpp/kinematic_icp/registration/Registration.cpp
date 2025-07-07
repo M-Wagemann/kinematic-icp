@@ -152,7 +152,7 @@ Sophus::SE3d KinematicRegistration::ComputeRobotMotion(const std::vector<Eigen::
                                                        const kiss_icp::VoxelHashMap &voxel_map,
                                                        const Sophus::SE3d &last_robot_pose,
                                                        const Sophus::SE3d &relative_wheel_odometry,
-                                                       const double max_correspondence_distance) {
+                                                       const double max_correspondence_distance, const std::string cmd_vel_) {
     Sophus::SE3d current_estimate = last_robot_pose * relative_wheel_odometry;
     if (voxel_map.Empty()) return current_estimate;
 

@@ -185,7 +185,7 @@ void LidarOdometryServer::InitializePoseAndExtrinsic(
     initialize_odom_node = true;
 }
 
-void LidarOdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg) {
+void LidarOdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg, std::string cmd_vel_) {
     if (!initialize_odom_node) {
         InitializePoseAndExtrinsic(msg);
     }
@@ -205,7 +205,7 @@ void LidarOdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::Con
         const auto &extrinsic = sensor_to_base_footprint_;
         const auto points = PointCloud2ToEigen(msg, {});
         const auto &[frame, kpoints] =
-            kinematic_icp_->RegisterFrame(points, timestamps, extrinsic, delta);
+            kinematic_icp_->RegisterFrame(points, timestamps, extrinsic, delta, cmd_vel_);
         PublishClouds(frame, kpoints);
     }
 

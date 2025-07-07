@@ -40,7 +40,7 @@ struct KinematicRegistration {
                                     const kiss_icp::VoxelHashMap &voxel_map,
                                     const Sophus::SE3d &last_robot_pose,
                                     const Sophus::SE3d &relative_wheel_odometry,
-                                    const double max_correspondence_distance);
+                                    const double max_correspondence_distance, const std::string cmd_vel_);
 
     int max_num_iterations_;
     double convergence_criterion_;
