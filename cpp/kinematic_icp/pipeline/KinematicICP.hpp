@@ -81,7 +81,7 @@ public:
     Vector3dVectorTuple RegisterFrame(const std::vector<Eigen::Vector3d> &frame,
                                       const std::vector<double> &timestamps,
                                       const Sophus::SE3d &lidar_to_base,
-                                      const Sophus::SE3d &relative_odometry, std::string cmd_vel_);
+                                      const Sophus::SE3d &relative_odometry, std::vector<double> cmd_vel_vector);
 
     inline void SetPose(const Sophus::SE3d &pose) {
         last_pose_ = pose;
