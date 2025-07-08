@@ -47,6 +47,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <geometry_msgs/Twist.h>
 #include <visualization_msgs/msg/marker.hpp>
 
 namespace {
@@ -185,7 +186,7 @@ void LidarOdometryServer::InitializePoseAndExtrinsic(
     initialize_odom_node = true;
 }
 
-void LidarOdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg, std::string cmd_vel_) {
+void LidarOdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg, const geometry_msgs::msg::Twist::SharedPt cmd_vel) {
     if (!initialize_odom_node) {
         InitializePoseAndExtrinsic(msg);
     }
@@ -200,12 +201,17 @@ void LidarOdometryServer::RegisterFrame(const sensor_msgs::msg::PointCloud2::Con
         LookupDeltaTransform(base_frame_, begin_odom_query, base_frame_, end_odom_query,
                              wheel_odom_frame_, tf_timeout_, tf2_buffer_);
 
+    // Erstelle einen Vektor, um alle Werte zu speichern
+    std::vector<double> cmd_vel_vector = {
+        twist_msg.linear.x, twist_msg.linear.y, twist_msg.linear.z,
+        twist_msg.angular.x, twist_msg.angular.y, twist_msg.angular.z
+    };
     // Run kinematic ICP
     if (delta.log().norm() > 1e-3) {
         const auto &extrinsic = sensor_to_base_footprint_;
         const auto points = PointCloud2ToEigen(msg, {});
         const auto &[frame, kpoints] =
-            kinematic_icp_->RegisterFrame(points, timestamps, extrinsic, delta, cmd_vel_);
+            kinematic_icp_->RegisterFrame(points, timestamps, extrinsic, delta, cmd_vel_vector);
         PublishClouds(frame, kpoints);
     }
 

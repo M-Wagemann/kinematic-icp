@@ -35,6 +35,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/time.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <geometry_msgs/Twist.h>
 //#include <sensor_msgs/msg/Imu>
 #include <sophus/se3.hpp>
 #include <std_msgs/msg/header.hpp>
@@ -56,7 +57,7 @@ public:
     explicit LidarOdometryServer(rclcpp::Node::SharedPtr node);
 
     /// Register new frame
-    void RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg);
+    void RegisterFrame(const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg, const geometry_msgs::msg::Twist::SharedPtr cmd_vel);
     std::unique_ptr<kinematic_icp::pipeline::KinematicICP> kinematic_icp_;
     utils::TimeStampHandler timestamps_handler_;
 

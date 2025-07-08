@@ -36,17 +36,21 @@
 
 #include "kinematic_icp_ros/nodes/online_node.hpp"
 #include "kinematic_icp_ros/server/LidarOdometryServer.hpp"
+#include <geometry_msgs/Twist.h>
+
 
 namespace kinematic_icp_ros {
 
 OnlineNode ::OnlineNode(const rclcpp::NodeOptions &options) {
     node_ = rclcpp::Node::make_shared("kinematic_icp_online_node", options);
     lidar_topic_ = node_->declare_parameter<std::string>("lidar_topic");
-    cmd_vel_ = node_ ->declare_parameter<std::string>("cmd_vel")
+    //cmd_vel_ = node_ ->declare_parameter<std::string>("cmd_vel")
 
     //imu_topic_ = node_ -> declare_parameter<std::string>("imu_topic");
     odometry_server_ = std::make_shared<LidarOdometryServer>(node_);
     const bool use_2d_lidar = node_->declare_parameter<bool>("use_2d_lidar");
+    cmd_vel = = this->create_subscription<geometry_msgs::msg::Twist>(
+      "cmd_vel", 10, std::bind(&MyNode::twist_callback, this, std::placeholders::_1));
     if (use_2d_lidar) {
         RCLCPP_INFO_STREAM(node_->get_logger(),
                            "Started in 2D scanner mode with topic: " << lidar_topic_);
@@ -59,7 +63,7 @@ OnlineNode ::OnlineNode(const rclcpp::NodeOptions &options) {
                                                   laser_geometry::channel_option::Timestamp);
                     return projected_scan;
                 }();
-                odometry_server_->RegisterFrame(lidar_msg);
+                odometry_server_->RegisterFrame(lidar_msg, cmd_vel);
             });
     } else {
         RCLCPP_INFO_STREAM(node_->get_logger(),
@@ -67,7 +71,7 @@ OnlineNode ::OnlineNode(const rclcpp::NodeOptions &options) {
         pointcloud_sub_ = node_->create_subscription<sensor_msgs::msg::PointCloud2>(
             lidar_topic_, rclcpp::SystemDefaultsQoS(),
             [&](const sensor_msgs::msg::PointCloud2::ConstSharedPtr &msg) {
-                odometry_server_->RegisterFrame(msg);
+                odometry_server_->RegisterFrame(msg, cmd_vel);
             });
     }
 }

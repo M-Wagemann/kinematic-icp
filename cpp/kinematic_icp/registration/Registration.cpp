@@ -152,13 +152,13 @@ Sophus::SE3d KinematicRegistration::ComputeRobotMotion(const std::vector<Eigen::
                                                        const kiss_icp::VoxelHashMap &voxel_map,
                                                        const Sophus::SE3d &last_robot_pose,
                                                        const Sophus::SE3d &relative_wheel_odometry,
-                                                       const double max_correspondence_distance, const std::string cmd_vel_) {
+                                                       const double max_correspondence_distance, const std::vector<double> cmd_vel_vector) {
     Sophus::SE3d current_estimate = last_robot_pose * relative_wheel_odometry;
     if (voxel_map.Empty()) return current_estimate;
 
-    switch (cmd_vel_):
     
-    case "2d":
+    //case "2d":
+    if (cmd_vel_vector[0] == 0.0){
         auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
             Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
             const double &displacement = integrated_controls(0);
@@ -168,8 +168,8 @@ Sophus::SE3d KinematicRegistration::ComputeRobotMotion(const std::vector<Eigen::
             dx(5) = theta;
             return Sophus::SE3d::exp(dx);
         };
-    break;
-    case "differential":
+    } else{
+    //case "differential":
         auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
             Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
             const double &displacement = integrated_controls(0);
@@ -179,29 +179,29 @@ Sophus::SE3d KinematicRegistration::ComputeRobotMotion(const std::vector<Eigen::
             dx(5) = theta;
             return Sophus::SE3d::exp(dx);
         };
-        break;
-    case "ackermann":
-        auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
-            Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
-            const double &displacement = integrated_controls(0);
-            const double &theta = integrated_controls(1);
-            dx(0) = displacement * std::sin(theta) / (theta + epsilon);
-            dx(1) = displacement * (1.0 - std::cos(theta)) / (theta + epsilon);
-            dx(5) = theta;
-            return Sophus::SE3d::exp(dx);
-        };
-        break;
-    default:
-        auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
-            Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
-            const double &displacement = integrated_controls(0);
-            const double &theta = integrated_controls(1);
-            dx(0) = displacement * std::sin(theta) / (theta + epsilon);
-            dx(1) = displacement * (1.0 - std::cos(theta)) / (theta + epsilon);
-            dx(5) = theta;
-            return Sophus::SE3d::exp(dx);
-        };
-        break;
+    }
+    // case "ackermann":
+    //     auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
+    //         Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
+    //         const double &displacement = integrated_controls(0);
+    //         const double &theta = integrated_controls(1);
+    //         dx(0) = displacement * std::sin(theta) / (theta + epsilon);
+    //         dx(1) = displacement * (1.0 - std::cos(theta)) / (theta + epsilon);
+    //         dx(5) = theta;
+    //         return Sophus::SE3d::exp(dx);
+    //     };
+    //     break;
+    // default:
+    //     auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
+    //         Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
+    //         const double &displacement = integrated_controls(0);
+    //         const double &theta = integrated_controls(1);
+    //         dx(0) = displacement * std::sin(theta) / (theta + epsilon);
+    //         dx(1) = displacement * (1.0 - std::cos(theta)) / (theta + epsilon);
+    //         dx(5) = theta;
+    //         return Sophus::SE3d::exp(dx);
+    //     };
+    //     break;
     auto correspondences =
         DataAssociation(frame, voxel_map, current_estimate, max_correspondence_distance);
 

@@ -28,7 +28,6 @@ def generate_launch_description():
             # ),
             DeclareLaunchArgument(
                 "cmd_vel",
-                default_value="ackermann_stering",
                 description="",
             ),
             DeclareLaunchArgument(

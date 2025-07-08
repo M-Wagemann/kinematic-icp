@@ -35,6 +35,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 //#include <sensor_msgs/msg/Imu>
+#include <geometry_msgs/Twist.h>
 
 #include "kinematic_icp_ros/nodes/offline_node.hpp"
 #include "kinematic_icp_ros/server/LidarOdometryServer.hpp"
@@ -72,7 +73,7 @@ OfflineNode::OfflineNode(const rclcpp::NodeOptions &options) {
     output_pose_file_ = std::filesystem::path(node_->declare_parameter<std::string>("output_dir"));
     output_pose_file_ /= poses_filename;
     auto tf_bridge = std::make_shared<BufferableBag::TFBridge>(node_);
-    bag_multiplexer_.AddBag(BufferableBag(bag_filename, tf_bridge, lidar_topic_, imu_topic_));
+    bag_multiplexer_.AddBag(BufferableBag(bag_filename, tf_bridge, lidar_topic_, cmd_vel_));
 }
 
 void OfflineNode::writePosesInTumFormat() {
@@ -141,7 +142,7 @@ void OfflineNode::Run() {
     // but instead of fetching the data from a topic, it does it from the provided bagfiles
     while (rclcpp::ok() && bag_multiplexer_.IsMessageAvailable()) {
         const auto msg = GetNextMsg();
-        odometry_server_->RegisterFrame(msg);
+        odometry_server_->RegisterFrame(msg, cmd_vel);
         const auto &stamp = odometry_server_->timestamps_handler_.last_processed_stamp_;
         poses_with_timestamps_.emplace_back(stamp.sec + stamp.nanosec * 1e-9,
                                             odometry_server_->kinematic_icp_->pose());
