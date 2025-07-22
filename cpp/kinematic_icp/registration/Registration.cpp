@@ -118,7 +118,7 @@ Eigen::Vector2d ComputePerturbation(const Correspondences &correspondences,
         sum_linear_systems);
     const double num_correspondences = static_cast<double>(correspondences.size());
 
-    const Eigen::Matrix2d Omega = Eigen::Vector2d(beta, 0).asDiagonal();
+    const Eigen::Matrix3d Omega = Eigen::Vector3d(beta, beta, 0).asDiagonal();
     JTJ /= num_correspondences;
     JTr /= num_correspondences;
     JTJ += Omega;
@@ -154,14 +154,15 @@ Sophus::SE3d KinematicRegistration::ComputeRobotMotion(const std::vector<Eigen::
                                                        const Sophus::SE3d &relative_wheel_odometry,
                                                        const double max_correspondence_distance) {
     Sophus::SE3d current_estimate = last_robot_pose * relative_wheel_odometry;
-    if (voxel_map.Empty()) return current_estimate;
+    if (voxel_map.Empty())return current_estimate;
 
-    auto motion_model = [](const Eigen::Vector2d &integrated_controls) {
+    auto motion_model = [](const Eigen::Vector3d &integrated_controls) {
         Sophus::SE3d::Tangent dx = Sophus::SE3d::Tangent::Zero();
-        const double &displacement = integrated_controls(0);
-        const double &theta = integrated_controls(1);
-        dx(0) = displacement * std::sin(theta) / (theta + epsilon);
-        dx(1) = displacement * (1.0 - std::cos(theta)) / (theta + epsilon);
+        const double &displacement_x = integrated_controls(0);
+        const double &displacement_y = integrated_controls(1);
+        const double &theta = integrated_controls(2);
+        dx(0) = ((displacement_x * std::sin(theta)) + (displacement_y * (std::cos(theta) - 1.0)) )/ (theta + epsilon);
+        dx(1) = ((displacement_x * (1.0 - std::cos(theta))) + (displacement_y * std::sin(theta)) )/ (theta + epsilon);
         dx(5) = theta;
         return Sophus::SE3d::exp(dx);
     };

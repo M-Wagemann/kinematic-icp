@@ -7,6 +7,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 "lidar_topic",
+                default_value="/cloud",
                 description="",
             ),
             DeclareLaunchArgument(
@@ -22,22 +23,22 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "lidar_odom_frame",
-                default_value="odom_lidar",
+                default_value="ranger/base_link",
                 description="",
             ),
             DeclareLaunchArgument(
                 "wheel_odom_frame",
-                default_value="odom",
+                default_value="ranger/odom",
                 description="",
             ),
             DeclareLaunchArgument(
                 "base_frame",
-                default_value="base_footprint",
+                default_value="ranger/base_footprint",
                 description="",
             ),
             DeclareLaunchArgument(
                 "publish_odom_tf",
-                default_value="true",
+                default_value="false",
                 description="",
                 choices=["true", "false"],
             ),
@@ -49,7 +50,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "visualize",
-                default_value="false",
+                default_value="true",
                 description="",
                 choices=["true", "false"],
             ),
